@@ -24,29 +24,16 @@ def solve_a(data):
                 threes += 1
                 three_match = True
 
-    _sum = twos * threes
-
-    return _sum
+    return twos * threes
 
 def solve_b(data):
     for line_01 in data:
         for line_02 in data:
             comp = zip(list(line_01), list(line_02))
 
-            diff = 0
+            if sum([1 if char[0] != char[1] else 0 for char in comp]) == 1:
 
-            for char in comp:
-                if char[0] != char[1]:
-                    diff += 1
-            
-            if diff == 1:
-                res = []
-                for index in range(len(line_01)):
-                    if line_01[index] == line_02[index]:
-                        res.append(line_01[index])
-                
-                res = ''.join(res)
-                return res
+                return ''.join([line_01[index] if line_01[index] == line_02[index] else '' for index in range(len(line_01))])
 
 if __name__ == '__main__':
     data = load_input('challenges/day_02/input.txt')
