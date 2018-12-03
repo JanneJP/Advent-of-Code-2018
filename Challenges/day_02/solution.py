@@ -29,9 +29,7 @@ def solve_a(data):
 def solve_b(data):
     for line_01 in data:
         for line_02 in data:
-            comp = zip(list(line_01), list(line_02))
-
-            if sum([1 if char[0] != char[1] else 0 for char in comp]) == 1:
+            if sum([1 if char[0] != char[1] else 0 for char in zip(list(line_01), list(line_02))]) == 1:
 
                 return ''.join([line_01[index] if line_01[index] == line_02[index] else '' for index in range(len(line_01))])
 
