@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import List
 
 class Rectangle():
-    def __init__(self, name: str, measurements: tuple, coordinates: tuple) -> Rectangle:
+    def __init__(self, name: str, measurements: tuple, coordinates: tuple):
         self.name = name
         self.width, self.height = measurements
         self.min_x, self.min_y = [coord + 1 for coord in coordinates]
