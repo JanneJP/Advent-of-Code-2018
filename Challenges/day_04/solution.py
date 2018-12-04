@@ -1,74 +1,39 @@
 import datetime
 
-class Guard():
-    def __init__(self, name):
-        self.name = name
-
-        self.minutes_slept = 0
-
 def load_input(filename):
-    data = []
     with open(filename, 'r') as input_file:
-        for line in input_file:
-            data.append(line.strip())
-
-    return data
+        return [line.strip() for line in input_file]
 
 def parse_data(raw_data):
-    log = []
-    raw_data = [line.replace('[', '').replace(']', '') for line in raw_data]
-    for line in raw_data:
-        tmp = line.split(' ')
-        timestamp = ' '.join([tmp[0], tmp[1]])
-        event = ' '.join(tmp[2:])
-        entry = {'timestamp': timestamp, 'event': event}
-        log.append(entry)
-    
-    log = sorted(log, key=lambda x: datetime.datetime.strptime(x['timestamp'], '%Y-%m-%d %H:%M')) 
-
-
-    return log
+    return sorted([{'timestamp': ' '.join([line.split(' ')[0], line.split(' ')[1]]), 'event':' '.join(line.split(' ')[2:])} for line in [line.replace('[', '').replace(']', '') for line in raw_data]], key=lambda x: datetime.datetime.strptime(x['timestamp'], '%Y-%m-%d %H:%M'))
 
 def solve_a(log):
     guards = {}
     active_guard = None
     start = None
     end = None
+
     for entry in log:
         if entry['event'] == 'falls asleep':
             start = int(entry['timestamp'].split(' ')[1].split(':')[1])
         elif entry['event'] == 'wakes up':
             end = int(entry['timestamp'].split(' ')[1].split(':')[1])
-            dif = end - start
             if active_guard not in guards:
                 guards[active_guard] = {'name': active_guard, 'minutes': [0 for _ in range(60)], 'total': 0}
-            guards[active_guard]['total'] += dif
+            guards[active_guard]['total'] += (end - start)
             for i in range(start, end):
                 guards[active_guard]['minutes'][i] += 1
         elif entry['event'][:5] == 'Guard':
-            num = str(entry['event'].split(' ')[1].replace('#', ''))
-            active_guard = num
-        else:
-            print(f'Unknown event: {entry}')
+            active_guard = str(entry['event'].split(' ')[1].replace('#', ''))
     
-    a = 0
-    b = None
+    highest_total_minutes = 0
+    top_guard_name = None
     for guard in guards:
-        if guards[guard]['total'] > a:
-            b = guards[guard]['name']
-            a = guards[guard]['total']
+        if guards[guard]['total'] > highest_total_minutes:
+            top_guard_name = guards[guard]['name']
+            highest_total_minutes = guards[guard]['total']
 
-    g = guards[b]
-
-    a = 0
-    b = 0
-
-    for i in range(len(g['minutes'])):
-        if g['minutes'][i] > a:
-            a = g['minutes'][i]
-            b = i
-    
-    return b * int(g['name'])
+    return guards[top_guard_name]['minutes'].index(max(guards[top_guard_name]['minutes'])) * int(guards[top_guard_name]['name'])
 
 def solve_b(log):
     guards = {}
